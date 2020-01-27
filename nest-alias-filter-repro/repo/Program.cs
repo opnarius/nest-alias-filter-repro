@@ -78,7 +78,8 @@ namespace repo
                 .RuleFor(x => x.LastName, f => f.Person.LastName)
                 .RuleFor(x => x.State, f => f.Person.Address.State)
                 .RuleFor(x => x.IsActive, f => f.Random.Bool(.8f))
-                .RuleFor(x => x.Number, f => counter++);
+                .RuleFor(x => x.Number, f => counter++)
+                .RuleFor(x => x.RegistrationDate, f=> f.Date.Recent(100));
 
             var userBatch = testUsers.Generate(count);
 

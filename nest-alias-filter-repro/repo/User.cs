@@ -17,5 +17,9 @@ namespace repo
         public bool IsActive { get; set; }
 
         public int Number { get; set; }
+
+        public DateTime RegistrationDate { get; set; }
+
+        public string RegistrationTime => RegistrationDate.ToLongTimeString();
     }
 }
