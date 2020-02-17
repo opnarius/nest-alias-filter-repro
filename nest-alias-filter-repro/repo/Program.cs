@@ -24,7 +24,7 @@ namespace repo
             var indexName = ".es-test-repro";
 
             await CreateIndexAndTestData(indexName, 1000);
-            CreateIndexAlias(indexName);
+            // CreateIndexAlias(indexName);
 
             try
             {
@@ -42,7 +42,7 @@ namespace repo
             var json = createAliasBody;
             Console.WriteLine(json);
 
-            var createResponse =  client.LowLevel.IndicesUpdateAliasesForAll<StringResponse>(
+            var createResponse = client.LowLevel.IndicesUpdateAliasesForAll<StringResponse>(
                 PostData.String(json));
 
             Console.WriteLine($"Create Alias Reponse: {Environment.NewLine}{createResponse}");
@@ -71,12 +71,15 @@ namespace repo
 
         private static async Task CreateIndexAndTestData(string indexName, int count)
         {
+            var counter = 1;
             var testUsers = new Faker<User>()
                 .RuleFor(x => x.Email, f => f.Person.Email)
                 .RuleFor(x => x.FirstName, f => f.Person.FirstName)
                 .RuleFor(x => x.LastName, f => f.Person.LastName)
                 .RuleFor(x => x.State, f => f.Person.Address.State)
-                .RuleFor(x => x.IsActive, f => f.Random.Bool(.8f));
+                .RuleFor(x => x.IsActive, f => f.Random.Bool(.8f))
+                .RuleFor(x => x.Number, f => counter++)
+                .RuleFor(x => x.RegistrationDate, f=> f.Date.Recent(100));
 
             var userBatch = testUsers.Generate(count);
 
