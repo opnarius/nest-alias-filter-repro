@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace repo
 {
@@ -21,5 +22,11 @@ namespace repo
         public DateTime RegistrationDate { get; set; }
 
         public string RegistrationTime => RegistrationDate.ToLongTimeString();
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Include)]
+        public string EmptyValue { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Include)]
+        public DateTime? LastOrderDate { get; set; }
     }
 }

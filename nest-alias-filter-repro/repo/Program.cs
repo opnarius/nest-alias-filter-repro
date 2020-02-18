@@ -5,6 +5,7 @@ using Bogus;
 using Bogus.Extensions;
 using Elasticsearch.Net;
 using Nest;
+using Nest.JsonNetSerializer;
 
 namespace repo
 {
@@ -15,13 +16,17 @@ namespace repo
         static Program()
         {
             var elasticServer = "http://localhost:9200";
-            var settings = new ConnectionSettings(new Uri(elasticServer));
+            var pool = new SingleNodeConnectionPool(new Uri(elasticServer));
+            var settings = new ConnectionSettings(pool, sourceSerializer: JsonNetSerializer.Default);
             client = new ElasticClient(settings);
         }
 
         static async Task Main(string[] args)
         {
-            var indexName = ".es-test-repro";
+            var indexName = "eugene-test-repro";
+
+            Console.WriteLine("Press Enter TO Generate DATA!!!!!!!!!!!!!!");
+            Console.ReadLine();
 
             await CreateIndexAndTestData(indexName, 1000);
             // CreateIndexAlias(indexName);
@@ -79,7 +84,16 @@ namespace repo
                 .RuleFor(x => x.State, f => f.Person.Address.State)
                 .RuleFor(x => x.IsActive, f => f.Random.Bool(.8f))
                 .RuleFor(x => x.Number, f => counter++)
-                .RuleFor(x => x.RegistrationDate, f=> f.Date.Recent(100));
+                .RuleFor(x => x.RegistrationDate, f => f.Date.Recent(100))
+                .RuleFor(x => x.EmptyValue, f =>
+                {
+                    if (counter % 2 == 0)
+                        return f.Random.AlphaNumeric(5);
+                    if (counter % 3 == 0)
+                        return null;
+                    return "";
+                })
+                .RuleFor(x => x.LastOrderDate, f => f.Date.Recent(365).OrNull(f));
 
             var userBatch = testUsers.Generate(count);
 
