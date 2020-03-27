@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
@@ -15,7 +16,8 @@ namespace repo
 
         static Program()
         {
-            var elasticServer = "http://localhost:9200";
+            //var elasticServer = "http://localhost:9200";
+            var elasticServer = "http://xporealtime:xpogkecon777@localhost:9200";
             var pool = new SingleNodeConnectionPool(new Uri(elasticServer));
             var settings = new ConnectionSettings(pool, sourceSerializer: JsonNetSerializer.Default);
             client = new ElasticClient(settings);
@@ -33,7 +35,36 @@ namespace repo
 
             try
             {
-                var docIndex = await client.GetIndexAsync(indexName);
+
+                //var qc = new QueryContainer();
+                //qc &= new TermQuery
+                //{
+                //    Field = "firstName",
+                //    Value = "alan".ToLower()
+                //};
+
+                //var searchRequest = new SearchRequest<User>("_all")
+                //{
+                //    Query = qc
+                //};
+
+                //Console.WriteLine(client.RequestResponseSerializer.SerializeToString(searchRequest));
+
+                ////var response = await client.SearchAsync<User>(x => x
+                ////    .AllIndices()
+                ////    .Query(q => q
+                ////        .Term(f => f.Email, "Alan.Tromp86@yahoo.com")
+                ////    ));
+
+                //var response = await client.SearchAsync<User>(searchRequest);
+                
+                //foreach (var hit in response.Hits)
+                //{
+                //    //await client.DeleteAsync(new DeleteRequest<User>(hit.Index, hit.Type, hit.Id));
+                //    await client.DeleteAsync(new DeleteRequest<User>(hit.Index, hit.Id));
+                //}
+                
+                var docIndex = await client.Indices.GetAsync(indexName);
                 var typeIndex = docIndex.Indices[indexName];
             }
             catch (Exception ex)
@@ -42,16 +73,16 @@ namespace repo
             }
         }
 
-        private static void CreateIndexAlias(string indexName)
-        {
-            var json = createAliasBody;
-            Console.WriteLine(json);
+        //private static void CreateIndexAlias(string indexName)
+        //{
+        //    var json = createAliasBody;
+        //    Console.WriteLine(json);
 
-            var createResponse = client.LowLevel.IndicesUpdateAliasesForAll<StringResponse>(
-                PostData.String(json));
+        //    var createResponse = client.LowLevel.Indices.UpdateAliasesForAll<StringResponse>(
+        //        PostData.String(json));
 
-            Console.WriteLine($"Create Alias Reponse: {Environment.NewLine}{createResponse}");
-        }
+        //    Console.WriteLine($"Create Alias Reponse: {Environment.NewLine}{createResponse}");
+        //}
 
         private static string createAliasBody = @"
 {
